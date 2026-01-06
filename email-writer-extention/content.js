@@ -3,7 +3,8 @@ console.log("Content script loaded");
 function getEmailContentElement() {
   const selectors = [
     '.h7',
-    '.a3S.aiL', 
+    '.a3S aiL',
+    '.ii gt', 
     '.gmail_quote',
     '[role="presentation"]' 
   ];
@@ -65,13 +66,14 @@ function injectCustomButton() {
       button.disabled = true;
 
       const emailContentElement = getEmailContentElement();
+      const emailText = emailContentElement?.innerText || "";
       const response = await fetch('http://localhost:8080/api/email/generate',{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ 
-          emailContent: emailContentElement,
+          emailContent: emailText,
           tone: "professional"
         })
       });
