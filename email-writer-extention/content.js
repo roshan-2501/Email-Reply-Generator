@@ -3,14 +3,19 @@ console.log("Content script loaded");
 function getEmailContentElement() {
   const selectors = [
     '.h7',
-    '.a3S aiL',
+    '.a3S.aiL',
     '.ii gt', 
     '.gmail_quote',
     '[role="presentation"]' 
+    // '.a3S.aiL',            // Gmail email body container
+    // 'div[dir="ltr"]',      // Actual text node
+    // '.ii.gt',              // Thread messages
+    // '.gmail_quote'
   ];
   for (const selector of selectors) {
     const content = document.querySelector(selector);
     if (content) {
+      console.log("Email content found using selector:", content.innerText.trim());
       return content.innerText.trim();
     }
   }
@@ -66,14 +71,15 @@ function injectCustomButton() {
       button.disabled = true;
 
       const emailContentElement = getEmailContentElement();
-      const emailText = emailContentElement?.innerText || "";
+      // const emailText = emailContentElement?.innerText || "";
+      console.log("Email content to send to backend:", emailContentElement);
       const response = await fetch('http://localhost:8080/api/email/generate',{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ 
-          emailContent: emailText,
+          emailContent: emailContentElement,
           tone: "professional"
         })
       });
